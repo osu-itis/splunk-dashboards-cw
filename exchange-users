@@ -1,11 +1,12 @@
 <dashboard>
-  <label>Exchange users / 60 min</label>
+  <label>Exchange users</label>
+  <description>60 minute window</description>
   <row>
     <panel>
       <title>iPhones/iPads</title>
       <single>
         <search>
-          <query>sourcetype=iis DeviceType="iPhone" OR "iPad" |stats count(DeviceType) as device_count | eventstats sum(device_count) AS total | table total</query>
+          <query>sourcetype=iis DeviceType="iPhone" OR "iPad" |stats dc(cs_username) as perUser by DeviceType| eventstats sum(perUser) AS total | table total</query>
           <earliest>-60m@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -13,10 +14,10 @@
       </single>
     </panel>
     <panel>
-      <title>Android Devices</title>
+      <title>Android devices</title>
       <single>
         <search>
-          <query>sourcetype=iis DeviceType="Android" OR "Samsung*" OR "LG*" OR "Moto*" OR "Sony*" OR "HTC*" OR "KF*"| stats count(DeviceType) as device_count | eventstats sum(device_count) AS total | table total</query>
+          <query>sourcetype=iis DeviceType="Android" OR "Samsung*" OR "LG*" OR "Moto*" OR "Sony*" OR "HTC*" OR "KF*"| stats dc(cs_username) as perUser by DeviceType| eventstats sum(perUser) AS total | table total</query>
           <earliest>-60m@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -37,10 +38,10 @@
       </single>
     </panel>
     <panel>
-      <title>Blackberries</title>
+      <title>Blackberry devices</title>
       <single>
         <search>
-          <query>sourcetype=iis DeviceType="Blackberry"|stats count(DeviceType) as device_count | eventstats sum(device_count) AS total | table total</query>
+          <query>sourcetype=iis DeviceType="Blackberry"|stats dc(cs_username) as perUser by DeviceType| eventstats sum(perUser) AS total | table total</query>
           <earliest>-60m@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -64,7 +65,7 @@
       <title>Outlook clients</title>
       <single>
         <search>
-          <query>sourcetype=iis DeviceType="Outlook"|stats count(DeviceType) as device_count | eventstats sum(device_count) AS total | table total</query>
+          <query>sourcetype=iis DeviceType="Outlook"|stats dc(cs_username) as perUser by DeviceType| eventstats sum(perUser) AS total | table total</query>
           <earliest>-60m@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -88,7 +89,7 @@
       <title>WindowsMail clients</title>
       <single>
         <search>
-          <query>sourcetype=iis DeviceType="WindowsMail"|stats count(DeviceType) as device_count | eventstats sum(device_count) AS total | table total</query>
+          <query>sourcetype=iis DeviceType="WindowsMail"|stats dc(cs_username) as perUser by DeviceType| eventstats sum(perUser) AS total | table total</query>
           <earliest>-60m@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
