@@ -229,7 +229,7 @@
       <title>Outlook clients</title>
       <chart>
         <search>
-          <query>sourcetype=iis cs_User_Agent="Microsoft+Office*" OR cs_User_Agent="MacOutlook*" | replace "Microsoft+Office*" with "Windows" in cs_User_Agent | replace "MacOutlook*" with "Mac" in cs_User_Agent | chart dc(cs_username) as "Outlook clients" by cs_User_Agent</query>
+          <query>sourcetype=iis cs_username!="" (cs_User_Agent="Microsoft+Office*" OR cs_User_Agent="MacOutlook*") | replace "Microsoft+Office*" with "Windows" in cs_User_Agent | replace "MacOutlook*" with "Mac" in cs_User_Agent | chart dc(cs_username) as "Outlook clients" by cs_User_Agent</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -318,7 +318,7 @@
       <title>Http Traffic</title>
       <chart>
         <search>
-          <query>sourcetype="citrix:netscaler:ipfix" AND destinationIPv4Address="128.193.7.94" netscalerHttpReqUrl!="" netscalerHttpReqUrl!="/" netscalerHttpReqUrl!="/favicon*" netscalerHttpReqUrl!="/apple*" netscalerHttpReqUrl!="/robots.txt" netscalerHttpReqUrl!="/exchange*"
+          <query>sourcetype="citrix:netscaler:ipfix" AND destinationIPv4Address="128.193.7.94" netscalerHttpReqUrl!="" netscalerHttpReqUrl!="/" netscalerHttpReqUrl!="/favicon*" netscalerHttpReqUrl!="/apple*" netscalerHttpReqUrl!="/robots.txt" netscalerHttpReqUrl!="/ecp*" netscalerHttpReqUrl!="/ECP*" netscalerHttpReqUrl!="/exchange*" netscalerHttpReqUrl!="*.php" netscalerHttpReqUrl!="/PowerShell*" netscalerHttpReqUrl!="/powershell*" netscalerHttpReqUrl!="/dist*" netscalerHttpReqUrl!="/images*" netscalerHttpReqUrl!="/webdav*" netscalerHttpReqUrl!="/sitemap.xml" netscalerHttpReqUrl!="/browserconfig.xml" netscalerHttpReqUrl!="/.well-known*" netscalerHttpReqUrl!="/api*"
 | replace "/rpc*" with "RPC" in netscalerHttpReqUrl
 | replace "/owa*" with "OWA" in netscalerHttpReqUrl
 | replace "/OWA*" with "OWA" in netscalerHttpReqUrl
