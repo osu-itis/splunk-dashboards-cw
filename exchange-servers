@@ -1,5 +1,5 @@
 <form>
-  <label>Exchange users</label>
+  <label>Exchange servers</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="time" searchWhenChanged="true">
       <label>Select date and time</label>
@@ -11,211 +11,48 @@
   </fieldset>
   <row>
     <panel>
-      <title>Unique Users</title>
-      <single>
-        <search>
-          <query>sourcetype=iis | stats dc(cs_username) as Unique_Users</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
-        <option name="drilldown">none</option>
-        <option name="numberPrecision">0</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,30,70,100]</option>
-        <option name="showSparkline">1</option>
-        <option name="showTrendIndicator">1</option>
-        <option name="trendColorInterpretation">standard</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">0</option>
-        <option name="useThousandSeparators">1</option>
-      </single>
-    </panel>
-    <panel>
-      <title>EWS Users</title>
-      <single>
-        <search>
-          <query>sourcetype="citrix:netscaler:ipfix" AND destinationIPv4Address="128.193.7.94"AND (netscalerHttpReqUrl="/ews/*" OR netscalerHttpReqUrl="/EWS/*") | stats dc(sourceIPv4Address) as hits | sort -hits</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-      </single>
-    </panel>
-    <panel>
-      <title>Exmail vip connections</title>
-      <single>
-        <search>
-          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User!="" | stats dc(netscalerConnectionId) as connections</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
-        <option name="drilldown">none</option>
-        <option name="numberPrecision">0</option>
-        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
-        <option name="rangeValues">[0,30,70,100]</option>
-        <option name="showSparkline">1</option>
-        <option name="showTrendIndicator">1</option>
-        <option name="trendColorInterpretation">standard</option>
-        <option name="trendDisplayMode">absolute</option>
-        <option name="unitPosition">after</option>
-        <option name="useColors">0</option>
-        <option name="useThousandSeparators">1</option>
-      </single>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>Top 10 Users</title>
+      <title>Http traffic by host</title>
       <chart>
         <search>
-          <query>sourcetype=iis AND cs_uri_stem="/ews/*" | top limit=10 cs_username</query>
+          <query>sourcetype="iis" cs_uri_stem!="" cs_uri_stem!="/" cs_uri_stem!="/favicon*" cs_uri_stem!="/apple*" cs_uri_stem!="/robots.txt" cs_uri_stem!="/ecp*" cs_uri_stem!="/ECP*" cs_uri_stem!="/exchange*" cs_uri_stem!="*.php" cs_uri_stem!="/PowerShell*" cs_uri_stem!="/powershell*" cs_uri_stem!="/dist*" cs_uri_stem!="/images*" cs_uri_stem!="/webdav*"
+cs_uri_stem!="/sitemap.xml"
+cs_uri_stem!="/browserconfig.xml"
+cs_uri_stem!="/.well-known*"
+| replace "/rpc*" with "RPC" in cs_uri_stem
+| replace "/owa*" with "OWA" in cs_uri_stem
+| replace "/OWA*" with "OWA" in cs_uri_stem
+| replace "/exchweb*" with "OWA" in cs_uri_stem
+| replace "/rpc*" with "RPC" in cs_uri_stem
+| replace "/OAB*" with "OAB" in cs_uri_stem
+| replace "/oab*" with "OAB" in cs_uri_stem
+| replace "/EWS*" with "EWS" in cs_uri_stem
+| replace "/ews*" with "EWS" in cs_uri_stem
+| replace "*ActiveSync*" with "ActiveSync" in cs_uri_stem
+| replace "/AutoDiscover*" with "AutoDiscover" in cs_uri_stem
+| replace "/autodiscover*" with "AutoDiscover" in cs_uri_stem
+| replace "/Autodiscover*" with "AutoDiscover" in cs_uri_stem
+| stats count by cs_uri_stem, host | xyseries host, cs_uri_stem, count</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.text">User</option>
+        <option name="charting.axisTitleX.text">hosts</option>
         <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.text">Traffic</option>
         <option name="charting.axisTitleY.visibility">visible</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.scale">linear</option>
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">bar</option>
+        <option name="charting.chart">column</option>
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
         <option name="charting.chart.nullValueMode">gaps</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
-        <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">none</option>
-      </chart>
-    </panel>
-    <panel>
-      <title>Top 10 senders</title>
-      <chart>
-        <search>
-          <query>sourcetype="iis" | top limit=10 SendAs</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.text">send as</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">bar</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
-        <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">none</option>
-      </chart>
-    </panel>
-    <panel>
-      <title>Top 10 recipients</title>
-      <chart>
-        <search>
-          <query>sourcetype="iis"| top limit=10 RecipientsList</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.text">listed recipients</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">bar</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
-        <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">none</option>
-      </chart>
-    </panel>
-  </row>
-  <row>
-    <panel>
-      <title>Devices</title>
-      <chart>
-        <search>
-          <query>sourcetype=iis cs_username!="" AND DeviceType!=""
-| replace "android" with "Android" in DeviceType
-| replace "SAMSUNG*" with "Android" in DeviceType
-| replace "Samsung*" with "Android" in DeviceType 
-| replace "LG*" with Android in DeviceType
-| replace "KF*" with "Android" in DeviceType
-| replace "Moto*" with "Android" in DeviceType
-| replace "HTC*" with "Android" in DeviceType
-| replace "Sony*" with "Android" in DeviceType
-| replace "ASUS*" with "Android" in DeviceType
-| replace "EVO" with "Android" in DeviceTypes
-| replace "i*" with "iOS" in DeviceType 
-| chart dc(cs_username) by DeviceType</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">pie</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.05</option>
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
         <option name="charting.drilldown">all</option>
@@ -225,11 +62,13 @@
         <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
+  </row>
+  <row>
     <panel>
-      <title>Outlook clients</title>
+      <title>500s only</title>
       <chart>
         <search>
-          <query>sourcetype=iis cs_User_Agent="Microsoft+Office*" OR cs_User_Agent="MacOutlook*" | replace "Microsoft+Office*" with "Windows" in cs_User_Agent | replace "MacOutlook*" with "Mac" in cs_User_Agent | chart dc(cs_username) as "Outlook clients" by cs_User_Agent</query>
+          <query>sourcetype="iis" sc_status="500" | stats count(sc_status) as "500 Errors" by host</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -259,13 +98,67 @@
         <option name="charting.legend.placement">none</option>
       </chart>
     </panel>
+    <panel>
+      <title>Other 500s</title>
+      <chart>
+        <search>
+          <query>sourcetype="iis" sc_status="5*" AND sc_status!="500" | stats count by host, sc_status | xyseries host, sc_status, count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">Total</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
   </row>
   <row>
     <panel>
-      <title>Total Users per host</title>
+      <title>500s by host</title>
       <table>
         <search>
-          <query>sourcetype=iis | stats dc(cs_username) as Connected_Users by host</query>
+          <query>sourcetype=iis sc_status="50*" |stats count(sc_status) as errors by host</query>
+          <earliest>$earliest$</earliest>
+        <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>500 substatus'</title>
+      <table>
+        <title>(if sc_substatus only shows 0's, increase time window)</title>
+        <search>
+          <query>sourcetype=iis sc_status="50*" |stats count(sc_substatus) as total by sc_status, sc_substatus</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -279,11 +172,13 @@
         <option name="wrap">true</option>
       </table>
     </panel>
+  </row>
+  <row>
     <panel>
-      <title>Users per host / time</title>
+      <title>Total operations time</title>
       <chart>
         <search>
-          <query>sourcetype=iis | timechart span=5m dc(cs_username) by host</query>
+          <query>sourcetype="iis" | timechart span=5m sum(time_taken) by host</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -291,7 +186,7 @@
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
         <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.text">Users</option>
+        <option name="charting.axisTitleY.text">Total ms</option>
         <option name="charting.axisTitleY.visibility">visible</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.scale">linear</option>
@@ -315,27 +210,10 @@
       </chart>
     </panel>
     <panel>
-      <title>Http Traffic</title>
+      <title>Max AD time taken</title>
       <chart>
         <search>
-          <query>sourcetype="citrix:netscaler:ipfix" AND destinationIPv4Address="128.193.7.94" netscalerHttpReqUrl!="" netscalerHttpReqUrl!="/" netscalerHttpReqUrl!="/favicon*" netscalerHttpReqUrl!="/apple*" netscalerHttpReqUrl!="/robots.txt" netscalerHttpReqUrl!="/exchange*"
-| replace "/rpc*" with "RPC" in netscalerHttpReqUrl
-| replace "/owa*" with "OWA" in netscalerHttpReqUrl
-| replace "/OWA*" with "OWA" in netscalerHttpReqUrl
-| replace "/exchweb*" with "OWA" in netscalerHttpReqUrl
-| replace "/rpc*" with "RPC" in netscalerHttpReqUrl
-| replace "/OAB*" with "OAB" in netscalerHttpReqUrl
-| replace "/oab*" with "OAB" in netscalerHttpReqUrl
-| replace "/EWS*" with "EWS" in netscalerHttpReqUrl
-| replace "/ews*" with "EWS" in netscalerHttpReqUrl
-| replace "*ActiveSync*" with "ActiveSync" in netscalerHttpReqUrl
-| replace "/AutoDiscover*" with "AutoDiscover" in netscalerHttpReqUrl
-| replace "/autodiscover*" with "AutoDiscover" in netscalerHttpReqUrl
-| replace "/Autodiscover*" with "AutoDiscover" in netscalerHttpReqUrl
-| replace "/ecp*" with "ECP" in netscalerHttpReqUrl
-| replace "/ECP*" with "ECP" in netscalerHttpReqUrl
-| stats count(netscalerHttpReqUrl) as traffic by netscalerHttpReqUrl 
-| sort -traffic</query>
+          <query>sourcetype="iis" | timechart span=5m max(AD_TimeTaken) by host</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -343,6 +221,44 @@
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
         <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">ms</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Sync operations</title>
+      <chart>
+        <search>
+          <query>sourcetype=iis Cmd="Sync" OR Cmd="FolderSync"| stats count by Cmd, host | xyseries host, Cmd, count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">Sync Operations</option>
         <option name="charting.axisTitleY.visibility">visible</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.scale">linear</option>
@@ -362,16 +278,14 @@
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
-  </row>
-  <row>
     <panel>
-      <title>Failed EWS logins</title>
+      <title>Non-sync operations</title>
       <chart>
         <search>
-          <query>sourcetype=iis (cs_uri_stem="/ews*" OR "/EWS*") sc_status=401 sc_win32_status=2148074252 | timechart span=1m count(sc_win32_status) as "Failed logins"</query>
+          <query>sourcetype="iis" Cmd!="Ping" Cmd!="Sync" Cmd!="FolderSync" | stats count by Cmd, host | xyseries host, Cmd, count</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -385,7 +299,7 @@
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">line</option>
+        <option name="charting.chart">column</option>
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
