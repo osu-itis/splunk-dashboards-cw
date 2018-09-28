@@ -14,10 +14,7 @@
       <title>Http traffic by host</title>
       <chart>
         <search>
-          <query>sourcetype="iis" cs_uri_stem!="" cs_uri_stem!="/" cs_uri_stem!="/favicon*" cs_uri_stem!="/apple*" cs_uri_stem!="/robots.txt" cs_uri_stem!="/ecp*" cs_uri_stem!="/ECP*" cs_uri_stem!="/exchange*" cs_uri_stem!="*.php" cs_uri_stem!="/PowerShell*" cs_uri_stem!="/powershell*" cs_uri_stem!="/dist*" cs_uri_stem!="/images*" cs_uri_stem!="/webdav*"
-cs_uri_stem!="/sitemap.xml"
-cs_uri_stem!="/browserconfig.xml"
-cs_uri_stem!="/.well-known*"
+          <query>sourcetype="iis" cs_uri_stem!="" cs_uri_stem!="/" cs_uri_stem!="/favicon*" 
 | replace "/rpc*" with "RPC" in cs_uri_stem
 | replace "/owa*" with "OWA" in cs_uri_stem
 | replace "/OWA*" with "OWA" in cs_uri_stem
@@ -31,7 +28,9 @@ cs_uri_stem!="/.well-known*"
 | replace "/AutoDiscover*" with "AutoDiscover" in cs_uri_stem
 | replace "/autodiscover*" with "AutoDiscover" in cs_uri_stem
 | replace "/Autodiscover*" with "AutoDiscover" in cs_uri_stem
-| stats count by cs_uri_stem, host | xyseries host, cs_uri_stem, count</query>
+| where cs_uri_stem="AutoDiscover" OR cs_uri_stem="ActiveSync" OR cs_uri_stem="EWS" OR cs_uri_stem="RPC" OR cs_uri_stem="OAB" OR cs_uri_stem="OWA"
+| stats count by cs_uri_stem, host | xyseries host, cs_uri_stem, count
+| sort -count</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -141,7 +140,7 @@ cs_uri_stem!="/.well-known*"
         <search>
           <query>sourcetype=iis sc_status="50*" |stats count(sc_status) as errors by host</query>
           <earliest>$earliest$</earliest>
-        <latest>$latest$</latest>
+          <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">50</option>
@@ -156,7 +155,7 @@ cs_uri_stem!="/.well-known*"
     <panel>
       <title>500 substatus'</title>
       <table>
-        <title>(if sc_substatus only shows 0's, increase time window)</title>
+        <title>(this might only shows 0's, increase time window)</title>
         <search>
           <query>sourcetype=iis sc_status="50*" |stats count(sc_substatus) as total by sc_status, sc_substatus</query>
           <earliest>$earliest$</earliest>
@@ -171,6 +170,167 @@ cs_uri_stem!="/.well-known*"
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
       </table>
+    </panel>
+    <panel>
+      <title>Errors by user</title>
+      <table>
+        <search>
+          <query>sourcetype=iis sc_status=5* | stats count(sc_status) as errors by cs_username | sort -errors | head 10</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Max Request_CPU_Total</title>
+      <chart>
+        <search>
+          <query>sourcetype="iis" | timechart span=5m max(Request_CPU_Total) by host</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Max TotalLocal_TimeTaken</title>
+      <chart>
+        <search>
+          <query>sourcetype="iis" | timechart span=5m max(TotalLocal_TimeTaken) by host</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">ms</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Max AD_TimeTaken</title>
+      <chart>
+        <search>
+          <query>sourcetype="iis" | timechart span=5m max(AD_TimeTaken) by host</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">ms</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Max Local_LongPole_Elapsed_TimeTaken</title>
+      <chart>
+        <search>
+          <query>sourcetype="iis" | timechart span=5m max(Local_LongPole_Elapsed_TimeTaken) by host</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">ms</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
     </panel>
   </row>
   <row>
@@ -210,43 +370,6 @@ cs_uri_stem!="/.well-known*"
       </chart>
     </panel>
     <panel>
-      <title>Max AD time taken</title>
-      <chart>
-        <search>
-          <query>sourcetype="iis" | timechart span=5m max(AD_TimeTaken) by host</query>
-          <earliest>$earliest$</earliest>
-          <latest>$latest$</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
-        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.text">ms</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
-        <option name="charting.axisTitleY2.visibility">visible</option>
-        <option name="charting.axisX.scale">linear</option>
-        <option name="charting.axisY.scale">linear</option>
-        <option name="charting.axisY2.enabled">0</option>
-        <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">line</option>
-        <option name="charting.chart.bubbleMaximumSize">50</option>
-        <option name="charting.chart.bubbleMinimumSize">10</option>
-        <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.showDataLabels">none</option>
-        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">default</option>
-        <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
-        <option name="charting.layout.splitSeries">0</option>
-        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
-        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">right</option>
-      </chart>
-    </panel>
-  </row>
-  <row>
-    <panel>
       <title>Sync operations</title>
       <chart>
         <search>
@@ -258,8 +381,7 @@ cs_uri_stem!="/.well-known*"
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
         <option name="charting.axisTitleX.visibility">visible</option>
-        <option name="charting.axisTitleY.text">Sync Operations</option>
-        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">collapsed</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.scale">linear</option>
         <option name="charting.axisY.scale">linear</option>

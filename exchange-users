@@ -311,14 +311,16 @@
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">right</option>
+        <option name="charting.legend.placement">bottom</option>
       </chart>
     </panel>
+  </row>
+  <row>
     <panel>
       <title>Http Traffic</title>
       <chart>
         <search>
-          <query>sourcetype="citrix:netscaler:ipfix" AND destinationIPv4Address="128.193.7.94" netscalerHttpReqUrl!="" netscalerHttpReqUrl!="/" netscalerHttpReqUrl!="/favicon*" netscalerHttpReqUrl!="/apple*" netscalerHttpReqUrl!="/robots.txt" netscalerHttpReqUrl!="/ecp*" netscalerHttpReqUrl!="/ECP*" netscalerHttpReqUrl!="/exchange*" netscalerHttpReqUrl!="*.php" netscalerHttpReqUrl!="/PowerShell*" netscalerHttpReqUrl!="/powershell*" netscalerHttpReqUrl!="/dist*" netscalerHttpReqUrl!="/images*" netscalerHttpReqUrl!="/webdav*" netscalerHttpReqUrl!="/sitemap.xml" netscalerHttpReqUrl!="/browserconfig.xml" netscalerHttpReqUrl!="/.well-known*" netscalerHttpReqUrl!="/api*"
+          <query>sourcetype="citrix:netscaler:ipfix" AND destinationIPv4Address="128.193.7.94" netscalerHttpReqUrl!="" netscalerHttpReqUrl!="/" netscalerHttpReqUrl!="/favicon*" netscalerHttpReqUrl!="/apple*"
 | replace "/rpc*" with "RPC" in netscalerHttpReqUrl
 | replace "/owa*" with "OWA" in netscalerHttpReqUrl
 | replace "/OWA*" with "OWA" in netscalerHttpReqUrl
@@ -334,7 +336,8 @@
 | replace "/Autodiscover*" with "AutoDiscover" in netscalerHttpReqUrl
 | replace "/ecp*" with "ECP" in netscalerHttpReqUrl
 | replace "/ECP*" with "ECP" in netscalerHttpReqUrl
-| stats count(netscalerHttpReqUrl) as traffic by netscalerHttpReqUrl 
+| where netscalerHttpReqUrl="AutoDiscover" OR netscalerHttpReqUrl="ActiveSync" OR netscalerHttpReqUrl="EWS" OR netscalerHttpReqUrl="RPC" OR netscalerHttpReqUrl="OAB" OR netscalerHttpReqUrl="OWA"
+| timechart span=5m count(netscalerHttpReqUrl) as traffic by netscalerHttpReqUrl 
 | sort -traffic</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
@@ -342,6 +345,7 @@
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.text">endpoints</option>
         <option name="charting.axisTitleX.visibility">visible</option>
         <option name="charting.axisTitleY.visibility">visible</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
@@ -349,7 +353,7 @@
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">column</option>
+        <option name="charting.chart">line</option>
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
@@ -362,7 +366,7 @@
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-        <option name="charting.legend.placement">none</option>
+        <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
   </row>
