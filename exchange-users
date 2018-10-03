@@ -46,7 +46,7 @@
       </single>
     </panel>
     <panel>
-      <title>Exmail vip connections</title>
+      <title>Exmail vip netscalerConnectionIds</title>
       <single>
         <search>
           <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User!="" | stats dc(netscalerConnectionId) as connections</query>
@@ -182,6 +182,7 @@
     <panel>
       <title>Devices</title>
       <chart>
+        <title>(by IIS' DeviceType)</title>
         <search>
           <query>sourcetype=iis cs_username!="" AND DeviceType!=""
 | replace "android" with "Android" in DeviceType
@@ -228,8 +229,12 @@
     <panel>
       <title>Outlook clients</title>
       <chart>
+        <title>(by netscaler's http_user_agent)</title>
         <search>
-          <query>sourcetype=iis cs_username!="" (cs_User_Agent="Microsoft+Office*" OR cs_User_Agent="MacOutlook*") | replace "Microsoft+Office*" with "Windows" in cs_User_Agent | replace "MacOutlook*" with "Mac" in cs_User_Agent | chart dc(cs_username) as "Outlook clients" by cs_User_Agent</query>
+          <query>sourcetype=citrix:netscaler:ipfix http_user_agent="MacOutlook*" OR http_user_agent="Microsoft Office*"
+| replace "Microsoft Office*" with "Windows" in http_user_agent 
+| replace "MacOutlook*" with "Mac" in http_user_agent 
+| chart dc(src_ip) by http_user_agent</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -280,7 +285,7 @@
       </table>
     </panel>
     <panel>
-      <title>Users per host / time</title>
+      <title>Users per host</title>
       <chart>
         <search>
           <query>sourcetype=iis | timechart span=5m dc(cs_username) by host</query>
@@ -375,7 +380,7 @@
       <title>Failed EWS logins</title>
       <chart>
         <search>
-          <query>sourcetype=iis (cs_uri_stem="/ews*" OR "/EWS*") sc_status=401 sc_win32_status=2148074252 | timechart span=1m count(sc_win32_status) as "Failed logins"</query>
+          <query>sourcetype=iis (cs_uri_stem="/ews*" OR "/EWS*") sc_status=401 sc_win32_status=2148074252 | timechart span=5m count(sc_win32_status) as "Failed logins"</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
