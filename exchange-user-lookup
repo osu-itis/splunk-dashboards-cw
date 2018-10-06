@@ -6,8 +6,8 @@
       <chart>
         <search>
           <query>sourcetype=iis cs_username="ONID\\mateb" | chart count(cs_username) by host</query>
-          <earliest>-60m@m</earliest>
-          <latest>now</latest>
+          <earliest>@earliest@</earliest>
+          <latest>@latest@<latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -35,15 +35,47 @@
         <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
-  </row>
-  <row>
+    <panel>
+      <title>user hits by host</title>
+      <chart>
+        <search>
+          <query>sourcetype=iis User="@usertoken" | timechart span=30m count(User) as hits by host</query>
+          <earliest>@earliest@</earliest>
+          <latest>@latest@<latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
     <panel>
       <title>entries per host over time</title>
       <chart>
         <search>
-          <query>sourcetype=iis cs_username="ONID\\mateb" | timechart count(cs_username) by host</query>
-          <earliest>-60m@m</earliest>
-          <latest>now</latest>
+          <query>sourcetype=iis cs_username="@usertoken" | timechart count(cs_username) by host</query>
+          <earliest>@earliest@</earliest>
+          <latest>@latest@<latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -77,9 +109,9 @@
       <title>Known user agents</title>
       <table>
         <search>
-          <query>sourcetype=iis cs_username="Laura.harmon@oregonstate.edu" | table cs_User_Agent | dedup cs_User_Agent</query>
-          <earliest>-60m@m</earliest>
-          <latest>now</latest>
+          <query>sourcetype=iis cs_username="@usertoken" | table cs_User_Agent | dedup cs_User_Agent</query>
+          <earliest>@earliest@</earliest>
+          <latest>@latest@<latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">50</option>
