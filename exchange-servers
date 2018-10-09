@@ -446,8 +446,8 @@
       <table>
         <search>
           <query>sourcetype=iis sc_status!="2*" AND sc_status!="3*" |stats count(sc_substatus) as total by sc_status, sc_substatus, sc_win32_status | sort -total</query>
-          <earliest>-60m@m</earliest>
-          <latest>now</latest>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">50</option>
