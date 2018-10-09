@@ -84,7 +84,7 @@
       <title>$user_onid$ LB exmail hits (24hr)</title>
       <table>
         <search>
-          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* | stats count as hits by Cmd</query>
+          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* | stats count as hits by Cmd | addcoltotals labelfield=Cmd label=Total</query>
           <earliest>-24h@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
