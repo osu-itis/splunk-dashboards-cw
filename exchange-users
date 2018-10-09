@@ -4,8 +4,8 @@
     <input type="time" searchWhenChanged="true">
       <label>Select date and time</label>
       <default>
-        <earliest>$earliest$</earliest>
-        <latest>$latest$</latest>
+        <earliest>-60m@m</earliest>
+        <latest>now</latest>
       </default>
     </input>
   </fieldset>
@@ -409,6 +409,26 @@
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
         <option name="charting.legend.placement">right</option>
       </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>User agents seen</title>
+      <table>
+        <search>
+          <query>sourcetype=iis cs_username="Laura.harmon@oregonstate.edu" | table cs_User_Agent | dedup cs_User_Agent</query>
+          <earliest>-60m@m</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
     </panel>
   </row>
 </form>

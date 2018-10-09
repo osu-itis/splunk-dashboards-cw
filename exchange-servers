@@ -4,8 +4,8 @@
     <input type="time" searchWhenChanged="true">
       <label>Select date and time</label>
       <default>
-        <earliest>$earliest$</earliest>
-        <latest>$latest$</latest>
+        <earliest>-60m@m</earliest>
+        <latest>now</latest>
       </default>
     </input>
   </fieldset>
@@ -403,6 +403,8 @@
         <option name="charting.legend.placement">right</option>
       </chart>
     </panel>
+  </row>
+  <row>
     <panel>
       <title>Non-sync operations</title>
       <chart>
