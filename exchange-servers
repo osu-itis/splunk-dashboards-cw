@@ -407,7 +407,7 @@
       <table>
         <title>(this might only shows 0's, increase time window)</title>
         <search>
-          <query>sourcetype=iis sc_status="50*" |stats count(sc_substatus) as total by sc_status, sc_substatus</query>
+          <query>sourcetype=iis sc_status="50*" |stats count(sc_substatus) as total by sc_status, sc_substatus, sc_win32_status</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
