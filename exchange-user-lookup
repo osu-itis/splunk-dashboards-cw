@@ -77,7 +77,7 @@
       <title>$user_onid$ average time_taken (24hr)</title>
       <table>
         <search>
-          <query>sourcetype=iis (User=*$user_onid$* OR cs_username=*$user_onid$*) | stats avg(time_taken) as ms by Cmd | eval ms=round(ms,2)</query>
+          <query>sourcetype=iis (User=*$user_onid$* OR cs_username=*$user_onid$*) | stats avg(time_taken) as ms by Cmd | eval ms=round(ms,2) | addcoltotals labelfield=Cmd label=Total</query>
           <earliest>-24h@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
