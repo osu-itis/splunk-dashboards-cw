@@ -405,7 +405,7 @@
     <panel>
       <title>500 substatus'</title>
       <table>
-        <title>(this might only shows 0's, increase time window)</title>
+        <title>(this might only shows 0's, try increasing time window)</title>
         <search>
           <query>sourcetype=iis sc_status="50*" |stats count(sc_substatus) as total by sc_status, sc_substatus, sc_win32_status</query>
           <earliest>$earliest$</earliest>
@@ -425,11 +425,15 @@
       <title>Errors by user</title>
       <table>
         <search>
-          <query>sourcetype=iis sc_status=5* | stats count(sc_status) as errors by cs_username | sort -errors | head 10</query>
+          <query>sourcetype=iis sc_status=5* | stats count(sc_status) as errors by cs_username | sort -errors | head 10 | rex field=cs_username mode=sed "s/^[^\\\]*\\\//g"</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
+        <drilldown>
+          <link target="_blank">/app/search/exchange_user_lookup?form.user_onid=$row.cs_username$</link>
+        </drilldown>
+        <option name="drilldown">row</option>
         <option name="count">50</option>
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>

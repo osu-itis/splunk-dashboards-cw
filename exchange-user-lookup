@@ -10,7 +10,7 @@
       <title>User agents (7d)</title>
       <table>
         <search>
-          <query>sourcetype=iis cs_username=*$user_onid$* | table cs_User_Agent | dedup cs_User_Agent | sort cs_User_Agent</query>
+          <query>sourcetype=iis cs_username=*$user_onid$* OR User=*$user_onid$* | table cs_User_Agent | dedup cs_User_Agent | sort cs_User_Agent</query>
           <earliest>-7d@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -28,7 +28,7 @@
       <title>Devices (7d)</title>
       <table>
         <search>
-          <query>sourcetype=iis User=*$user_onid$* | table DeviceType | dedup DeviceType</query>
+          <query>sourcetype=iis User=*$user_onid$* OR cs_username=*$user_onid$* | table DeviceType | dedup DeviceType</query>
           <earliest>-7d@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -46,7 +46,7 @@
       <title>IPs (7d)</title>
       <table>
         <search>
-          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* | table src_ip | dedup src_ip</query>
+          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* OR cs_username=*$user_onid$* | table src_ip | dedup src_ip</query>
           <earliest>-7d@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -66,7 +66,7 @@
       <title>$user_onid$ LB exmail hits (24hr)</title>
       <table>
         <search>
-          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* | stats count as hits by Cmd | addcoltotals labelfield=Cmd label=Total</query>
+          <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* OR cs_username=*$user_onid$* | stats count as hits by Cmd | addcoltotals labelfield=Cmd label=Total</query>
           <earliest>-24h@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -77,7 +77,7 @@
       <title>$user_onid$ average time_taken (24hr)</title>
       <table>
         <search>
-          <query>sourcetype=iis User=*$user_onid$* | stats avg(time_taken) as ms by Cmd | eval ms=round(ms,2)</query>
+          <query>sourcetype=iis (User=*$user_onid$* OR cs_username=*$user_onid$*) | stats avg(time_taken) as ms by Cmd | eval ms=round(ms,2)</query>
           <earliest>-24h@m</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -251,7 +251,7 @@
       <title>Sync commands</title>
       <chart>
         <search>
-          <query>sourcetype=iis User=*$user_onid$* (Cmd="Sync" OR Cmd="FolderSync") | timechart count(Cmd) as syncs by Cmd</query>
+          <query>sourcetype=iis (User=*$user_onid$* OR cs_username=*$user_onid$*) (Cmd="Sync" OR Cmd="FolderSync") | timechart count(Cmd) as syncs by Cmd</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -285,7 +285,7 @@
       <title>Non-sync commands</title>
       <chart>
         <search>
-          <query>sourcetype=iis User=*$user_onid$* Cmd!="Sync" AND Cmd!="FolderSync" | timechart count(Cmd) as commands by Cmd</query>
+          <query>sourcetype=iis (User=*$user_onid$* OR cs_username= *$user_onid$*) Cmd!="Sync" AND Cmd!="FolderSync" | timechart count(Cmd) as commands by Cmd</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -321,7 +321,7 @@
       <title>500s</title>
       <table>
         <search>
-          <query>sourcetype=iis sc_status="50*" cs_username=*$user_onid$* |stats count(sc_substatus) as total by sc_status, sc_substatus, sc_win32_status</query>
+          <query>sourcetype=iis sc_status="50*" (cs_username=*$user_onid$* OR User=*$user_onid$*) |stats count(sc_substatus) as total by sc_status, sc_substatus, sc_win32_status</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
