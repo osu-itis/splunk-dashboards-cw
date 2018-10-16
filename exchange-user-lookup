@@ -1,4 +1,4 @@
-<form>
+<form theme="light">
   <label>Exchange user lookup</label>
   <fieldset submitButton="false" autoRun="true">
     <input type="text" token="user_onid" searchWhenChanged="true">
@@ -7,11 +7,11 @@
   </fieldset>
   <row>
     <panel>
-      <title>User agents (7d)</title>
+      <title>User agents (24hr)</title>
       <table>
         <search>
           <query>sourcetype=iis cs_username=*$user_onid$* OR User=*$user_onid$* | table cs_User_Agent | dedup cs_User_Agent | sort cs_User_Agent</query>
-          <earliest>-7d@h</earliest>
+          <earliest>-24h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
@@ -25,11 +25,11 @@
       </table>
     </panel>
     <panel>
-      <title>Devices (7d)</title>
+      <title>Devices (24hr)</title>
       <table>
         <search>
           <query>sourcetype=iis User=*$user_onid$* OR cs_username=*$user_onid$* | table DeviceType | dedup DeviceType</query>
-          <earliest>-7d@h</earliest>
+          <earliest>-24h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
@@ -43,11 +43,11 @@
       </table>
     </panel>
     <panel>
-      <title>IPs (7d)</title>
+      <title>IPs (24hr)</title>
       <table>
         <search>
           <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* OR cs_username=*$user_onid$* | table src_ip | dedup src_ip</query>
-          <earliest>-7d@h</earliest>
+          <earliest>-24h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
@@ -63,33 +63,33 @@
   </row>
   <row>
     <panel>
-      <title>$user_onid$ LB exmail hits (24hr)</title>
+      <title>$user_onid$ LB exmail hits (60min)</title>
       <table>
         <search>
           <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User=*$user_onid$* OR cs_username=*$user_onid$* | stats count as hits by Cmd | addcoltotals labelfield=Cmd label=Total</query>
-          <earliest>-24h@m</earliest>
+          <earliest>-1h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
       </table>
     </panel>
     <panel>
-      <title>$user_onid$ average time_taken (24hr)</title>
+      <title>$user_onid$ average time_taken (60min)</title>
       <table>
         <search>
           <query>sourcetype=iis (User=*$user_onid$* OR cs_username=*$user_onid$*) | stats avg(time_taken) as ms by Cmd | eval ms=round(ms,2) | addcoltotals labelfield=Cmd label=Total</query>
-          <earliest>-24h@m</earliest>
+          <earliest>-1h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
       </table>
     </panel>
     <panel>
-      <title>Global average exmail hits per user (24hr)</title>
+      <title>Global average exmail hits per user (60min)</title>
       <single>
         <search>
           <query>sourcetype=citrix:netscaler:ipfix netscalerHttpDomainName="exmail.oregonstate.edu" User!="" | stats count by User | stats avg(count)</query>
-          <earliest>-24h@h</earliest>
+          <earliest>-1h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
@@ -109,11 +109,11 @@
       </single>
     </panel>
     <panel>
-      <title>Global average time_taken (ms)(24hr)</title>
+      <title>Global average time_taken (ms)(60min)</title>
       <single>
         <search>
           <query>sourcetype=iis User!="" | stats avg(time_taken) as averages by User | stats avg(averages)</query>
-          <earliest>-24h@m</earliest>
+          <earliest>-1h@h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
@@ -193,14 +193,14 @@
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
-        <option name="charting.chart">area</option>
+        <option name="charting.chart">line</option>
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
         <option name="charting.chart.nullValueMode">gaps</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
         <option name="charting.drilldown">all</option>
         <option name="charting.layout.splitSeries">0</option>

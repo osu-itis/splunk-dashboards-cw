@@ -446,7 +446,7 @@
   </row>
   <row>
     <panel>
-      <title>non 200/300 status'</title>
+      <title>non 200/300 statuses</title>
       <table>
         <search>
           <query>sourcetype=iis sc_status!="2*" AND sc_status!="3*" |stats count(sc_substatus) as total by sc_status, sc_substatus, sc_win32_status | sort -total</query>
