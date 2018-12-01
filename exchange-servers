@@ -63,6 +63,25 @@
     </panel>
   </row>
   <row>
+  <panel>
+    <table>
+      <search>
+        <query>sourcetype=ms:iis:auto cs_username!="ONID*" AND cs_username!="*@oregonstate.edu" | rex field=cs_username mode=sed "s/[^\\/]+$$//" | stats  count(cs_username) as "Domains" by cs_username</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+        <sampleRatio>1</sampleRatio>
+      </search>
+      <option name="count">50</option>
+      <option name="dataOverlayMode">none</option>
+      <option name="drilldown">none</option>
+      <option name="percentagesRow">false</option>
+      <option name="rowNumbers">false</option>
+      <option name="totalsRow">false</option>
+      <option name="wrap">true</option>
+    </table>
+  </panel>
+</row>
+  <row>
     <panel>
       <title>Unique OWA users</title>
       <single>
