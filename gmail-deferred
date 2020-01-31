@@ -12,17 +12,23 @@
   </fieldset>
   <row>
     <panel>
-      <title>Total deferred</title>
-      <single>
+      <title>Message totals</title>
+      <table>
         <search>
-          <query>sourcetype=postfix_syslog relay="*l.google.com*" status=deferred | stats count(status)</query>
+          <query>sourcetype=postfix_syslog relay="*l.google.com*" | eventstats count as total_messages| chart count,first(total_messages) as total_messages by status | eval percentage=round((count/total_messages)*100,3)</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
         <option name="drilldown">none</option>
-        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
-      </single>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
     </panel>
     <panel>
       <title>OSU-Gmail deferred total</title>
